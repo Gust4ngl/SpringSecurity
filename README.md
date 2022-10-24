@@ -7,7 +7,7 @@ criar as classes baseadas nas migrations;
 	user (gust4.model), essa classe tambem mapeia a user_permission, que é responsavel por 
 		saber qual as permissoes que o usuario possui
 
-criar a interface responsaveis por acessar o banco de dados;
+criar a interface responsavel por acessar o banco de dados;
 	UserRepository
 	
 Criar a classe UserServices
@@ -21,5 +21,15 @@ Criar as classes
 	
 Criar a classe que é responsavel por criar o tokenJWT
 	JwtTokenProvider(gust4.security.jwt)
+
+Criar a classe JwtTokenfilter (gust4.security.jwt)
+
+Criar a classe JwtConfigurer (gust4.security.jwt)
+
+Criar a classe de configurações de segurança, Security config
+
+criar classe services
+
+criar a classe controller
 
 	
