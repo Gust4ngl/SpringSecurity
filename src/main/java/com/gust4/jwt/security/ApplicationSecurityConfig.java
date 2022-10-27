@@ -2,12 +2,14 @@ package com.gust4.jwt.security;
 
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.context.annotation.*;
+import org.springframework.http.*;
 import org.springframework.security.config.annotation.web.builders.*;
 import org.springframework.security.config.annotation.web.configuration.*;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.*;
 import org.springframework.security.provisioning.*;
 
+import static com.gust4.jwt.security.ApplicationUserPermission.*;
 import static com.gust4.jwt.security.ApplicationUserRole.*;
 
 @Configuration
@@ -24,10 +26,14 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/" ,"index" , "/hello/user").permitAll()
-                .antMatchers("/hello/trainee").hasRole(ADMINTRAINEE.name())
-                .antMatchers("/hello/*").hasRole(ADMIN.name())
+                .antMatchers("/hello/trainee").hasAnyRole(ADMINTRAINEE.name(), ADMIN.name())
+                .antMatchers(HttpMethod.GET ,"/management/people/**").hasAuthority(PERSON_READ.name())
+                .antMatchers(HttpMethod.POST ,"/management/people/**").hasAuthority(PERSON_WRITE.name())
+                .antMatchers(HttpMethod.DELETE ,"/management/people/**").hasAuthority(PERSON_WRITE.name())
+                .antMatchers(HttpMethod.GET ,"/management/people/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name())
                 .and()
                 .httpBasic();
     }

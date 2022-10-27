@@ -8,8 +8,8 @@ import static com.gust4.jwt.security.ApplicationUserPermission.*;
 
 public enum ApplicationUserRole {
     STUDENT(Set.of()),
-    ADMIN(Set.of(COURSE_WRITE, COURSE_READ, STUDENT_WRITE, STUDENT_READ)),
-    ADMINTRAINEE(Set.of(COURSE_READ, STUDENT_READ));
+    ADMIN(Set.of(PERSON_READ, PERSON_WRITE)),
+    ADMINTRAINEE(Set.of(PERSON_READ));
 
     private final Set<ApplicationUserPermission> permissions;
 
