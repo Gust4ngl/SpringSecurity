@@ -1,4 +1,4 @@
-package com.gust4.jwt.config;
+package com.gust4.jwt.security;
 
 import org.springframework.context.annotation.*;
 import org.springframework.security.crypto.bcrypt.*;

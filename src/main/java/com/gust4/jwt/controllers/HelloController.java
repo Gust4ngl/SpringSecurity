@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.*;
 public class HelloController {
 
     @GetMapping("/user")
-    public String user() {
-        return "hello user";
-    }
-    @GetMapping("adm")
-    public String adm() {
-        return "hello adm";
-    }
+    public String user() {return "hello user";}
+
+    @GetMapping("/adm")
+    public String adm() {return "hello adm";}
+
+    @GetMapping("/trainee")
+    public String admTrainee() {return "hello trainee";}
 
 }
