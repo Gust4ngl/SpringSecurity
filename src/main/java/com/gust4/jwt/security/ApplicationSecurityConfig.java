@@ -30,10 +30,11 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/" ,"index" , "/hello/user").permitAll()
                 .antMatchers("/hello/trainee").hasAnyRole(ADMINTRAINEE.name(), ADMIN.name())
-                .antMatchers(HttpMethod.GET ,"/management/people/**").hasAuthority(PERSON_READ.name())
-                .antMatchers(HttpMethod.POST ,"/management/people/**").hasAuthority(PERSON_WRITE.name())
-                .antMatchers(HttpMethod.DELETE ,"/management/people/**").hasAuthority(PERSON_WRITE.name())
                 .antMatchers(HttpMethod.GET ,"/management/people/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name())
+                .antMatchers(HttpMethod.POST ,"/management/people/**").hasAuthority(PERSON_WRITE.getPermission())
+                .antMatchers(HttpMethod.DELETE ,"/management/people/**").hasAuthority(PERSON_WRITE.getPermission())
+                .anyRequest()
+                .authenticated()
                 .and()
                 .httpBasic();
     }
@@ -44,19 +45,22 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
        UserDetails gustaUser = User.builder()
                .username("Gusta")
                .password(passwordEncoder.encode("password"))
-               .roles(ADMIN.name())
+//               .roles(ADMIN.name())
+               .authorities(ADMIN.getGrandGrantedAuthorities())
                .build();
 
        UserDetails testUser = User.builder()
                .username("gusta2")
                .password(passwordEncoder.encode("password"))
-               .roles(STUDENT.name())
+//               .roles(STUDENT.name())
+               .authorities(STUDENT.getGrandGrantedAuthorities())
                .build();
 
        UserDetails traineeUser = User.builder()
                .username("gusta3")
                .password(passwordEncoder.encode("password"))
-               .roles(ADMINTRAINEE.name())
+//               .roles(ADMINTRAINEE.name())
+               .authorities(ADMINTRAINEE.getGrandGrantedAuthorities())
                .build();
 
        return new InMemoryUserDetailsManager(
