@@ -1,5 +1,6 @@
 package com.gust4.jwt.controllers;
 
+import org.springframework.security.access.prepost.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -10,6 +11,7 @@ public class HelloController {
     public String user() {return "hello user";}
 
     @GetMapping("/adm")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String adm() {return "hello adm";}
 
     @GetMapping("/trainee")
