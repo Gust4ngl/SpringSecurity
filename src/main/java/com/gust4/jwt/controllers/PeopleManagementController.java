@@ -13,7 +13,8 @@ public class PeopleManagementController {
     private static final List<Person> PEOPLE = Arrays.asList(
             new Person(1L, "gusta"),
             new Person(2L, "carlos"),
-            new Person(3L, "João")
+            new Person(3L, "João"),
+            new Person(4L, "babi")
     );
 
 //    hasRole('ROLE_') hasAnyRole('ROLE_') hasAuthority('permission') hasAnyAuthority('permissions')
