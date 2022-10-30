@@ -15,6 +15,7 @@ public class HelloController {
     public String adm() {return "hello adm";}
 
     @GetMapping("/trainee")
+    @PreAuthorize("hasAnyRole('ROLE_ADMINTRAINEE', 'ROLE_ADMIN' )")
     public String admTrainee() {return "hello trainee";}
 
 }

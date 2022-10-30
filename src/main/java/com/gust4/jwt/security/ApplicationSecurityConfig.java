@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.*;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.*;
 import org.springframework.security.provisioning.*;
+import org.springframework.security.web.csrf.*;
 
 import static com.gust4.jwt.security.ApplicationUserPermission.*;
 import static com.gust4.jwt.security.ApplicationUserRole.*;
@@ -28,14 +29,11 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
+                .csrf()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .and()
                 .authorizeRequests()
                 .antMatchers("/" ,"index" , "/hello/user").permitAll()
-                .antMatchers("/hello/trainee").hasAnyRole(ADMINTRAINEE.name(), ADMIN.name())
-//              these methods are no longer used as the @PreAuthorize annotation overrides them in controller methods
-//                .antMatchers(HttpMethod.GET ,"/management/people/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name())
-//                .antMatchers(HttpMethod.POST ,"/management/people/**").hasAuthority(PERSON_WRITE.getPermission())
-//                .antMatchers(HttpMethod.DELETE ,"/management/people/**").hasAuthority(PERSON_WRITE.getPermission())
                 .anyRequest()
                 .authenticated()
                 .and()
