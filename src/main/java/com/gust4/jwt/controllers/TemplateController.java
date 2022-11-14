@@ -3,13 +3,17 @@ package com.gust4.jwt.controllers;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @RequestMapping("/")
 public class TemplateController {
 
-    @GetMapping("login")
-    public String getLoginView() {
-        return "login";
-    }
+//    @GetMapping("login")
+//    public String getLoginView() {
+//        return "login";
+//    }
+//    @GetMapping("courses")
+//    public String getCoursesView() {
+//        return "courses";
+//    }
 
 }
