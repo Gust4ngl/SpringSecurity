@@ -1,6 +1,6 @@
-package com.gust4.jwt.controllers;
+package com.gust4.springbootsecurity.controllers;
 
-import com.gust4.jwt.model.*;
+import com.gust4.springbootsecurity.model.*;
 import org.springframework.security.access.prepost.*;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,4 +1,4 @@
-package com.gust4.jwt.security;
+package com.gust4.springbootsecurity.security;
 
 public enum ApplicationUserPermission {
     PERSON_READ("person:read"),

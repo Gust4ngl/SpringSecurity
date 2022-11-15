@@ -1,4 +1,4 @@
-package com.gust4.jwt;
+package com.gust4.springbootsecurity;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

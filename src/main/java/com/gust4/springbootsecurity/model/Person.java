@@ -1,4 +1,4 @@
-package com.gust4.jwt.model;
+package com.gust4.springbootsecurity.model;
 
 import java.util.*;
 

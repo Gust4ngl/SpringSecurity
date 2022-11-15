@@ -1,13 +1,11 @@
-package com.gust4.jwt.security;
+package com.gust4.springbootsecurity.security;
 
-import org.assertj.core.util.*;
-import org.springframework.security.core.*;
 import org.springframework.security.core.authority.*;
 
 import java.util.*;
 import java.util.stream.*;
 
-import static com.gust4.jwt.security.ApplicationUserPermission.*;
+import static com.gust4.springbootsecurity.security.ApplicationUserPermission.*;
 
 public enum ApplicationUserRole {
     STUDENT(Set.of()),
