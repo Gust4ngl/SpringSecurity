@@ -1,56 +1,45 @@
-package com.gust4.springbootsecurity.security;
+package com.gust4.config;
 
-import com.gust4.springbootsecurity.model.*;
-import com.gust4.springbootsecurity.services.*;
+import com.mysql.cj.protocol.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.context.annotation.*;
-import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.*;
 import org.springframework.security.config.annotation.authentication.builders.*;
 import org.springframework.security.config.annotation.method.configuration.*;
 import org.springframework.security.config.annotation.web.builders.*;
 import org.springframework.security.config.annotation.web.configuration.*;
-import org.springframework.security.config.authentication.*;
 import org.springframework.security.core.userdetails.*;
+import org.springframework.security.crypto.bcrypt.*;
 import org.springframework.security.crypto.password.*;
 import org.springframework.security.web.util.matcher.*;
 
-import javax.sql.*;
-
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    DataSource dataSource;
+    private UserDetailsService userDetailsService;
 
-    private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(10);
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.jdbcAuthentication()
-                .dataSource(dataSource)
-                .withDefaultSchema();
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-//                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-//                .and()
-                .csrf().disable()
+        http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/" ,"index" , "/hello/user").permitAll()
+                .antMatchers("/", "/hello/user").permitAll()
+                .antMatchers("/hello/adm").hasAuthority("ADMIN")
+                .antMatchers("/hello/trainee").hasAnyAuthority("ADMIN", "TRAINEE")
                 .anyRequest()
                 .authenticated()
                 .and()
-//                .httpBasic();
                 .formLogin()
                     .loginPage("/login").permitAll()
                     .defaultSuccessUrl("/courses", true)
@@ -61,7 +50,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                     .rememberMeParameter("remember-me")
                 .and()
                 .logout()
-                    .logoutUrl("/logout")
+                .logoutUrl("/logout")
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))//if crsf is disabled. If crsf is enabled, delete this line
                     .clearAuthentication(true)
                     .invalidateHttpSession(true)
