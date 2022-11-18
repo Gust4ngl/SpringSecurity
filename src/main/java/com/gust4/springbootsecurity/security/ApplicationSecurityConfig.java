@@ -1,27 +1,42 @@
 package com.gust4.springbootsecurity.security;
 
+import com.gust4.springbootsecurity.model.*;
+import com.gust4.springbootsecurity.services.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.context.annotation.*;
+import org.springframework.security.authentication.*;
+import org.springframework.security.authentication.dao.*;
+import org.springframework.security.config.annotation.authentication.builders.*;
 import org.springframework.security.config.annotation.method.configuration.*;
 import org.springframework.security.config.annotation.web.builders.*;
 import org.springframework.security.config.annotation.web.configuration.*;
+import org.springframework.security.config.authentication.*;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.*;
-import org.springframework.security.provisioning.*;
 import org.springframework.security.web.util.matcher.*;
 
-import static com.gust4.springbootsecurity.security.ApplicationUserRole.*;
+import javax.sql.*;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    DataSource dataSource;
+
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public ApplicationSecurityConfig(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.jdbcAuthentication()
+                .dataSource(dataSource)
+                .withDefaultSchema();
     }
 
     @Override
@@ -54,35 +69,4 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                     .logoutSuccessUrl("/login");
     }
 
-    @Override
-    @Bean
-    protected UserDetailsService userDetailsService() {
-       UserDetails gustaUser = User.builder()
-               .username("Gusta")
-               .password(passwordEncoder.encode("password"))
-//               .roles(ADMIN.name())
-               .authorities(ADMIN.getGrandGrantedAuthorities())
-               .build();
-
-       UserDetails testUser = User.builder()
-               .username("gusta2")
-               .password(passwordEncoder.encode("password"))
-//               .roles(STUDENT.name())
-               .authorities(STUDENT.getGrandGrantedAuthorities())
-               .build();
-
-       UserDetails traineeUser = User.builder()
-               .username("gusta3")
-               .password(passwordEncoder.encode("password"))
-//               .roles(ADMINTRAINEE.name())
-               .authorities(ADMINTRAINEE.getGrandGrantedAuthorities())
-               .build();
-
-       return new InMemoryUserDetailsManager(
-               gustaUser,
-               testUser,
-               traineeUser
-       );
-
-    }
 }
