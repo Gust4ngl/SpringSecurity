@@ -1,4 +1,4 @@
-package br.com.gust4.jwt.tests_with_jwt;
+package br.com.gust4.springbootsecurity;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
