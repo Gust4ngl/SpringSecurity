@@ -1,4 +1,4 @@
-package com.gust4.config;
+package com.gust4.springbootsecurity.config;
 
 import com.mysql.cj.protocol.*;
 import org.springframework.beans.factory.annotation.*;
@@ -32,19 +32,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http
+                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/", "/hello/user").permitAll()
+                .antMatchers("/").permitAll()
                 .antMatchers("/hello/adm").hasAuthority("ADMIN")
-                .antMatchers("/hello/trainee").hasAnyAuthority("ADMIN", "TRAINEE")
+                .antMatchers("/hello/trainee").hasAnyAuthority("TRAINEE")
+                .antMatchers("/hello/user").hasAnyAuthority("COMMON_USER")
                 .anyRequest()
                 .authenticated()
                 .and()
                 .formLogin()
                     .loginPage("/login").permitAll()
-                    .defaultSuccessUrl("/courses", true)
+                    .defaultSuccessUrl("/", true)
                     .passwordParameter("password")
-                    .usernameParameter("user")
+                    .usernameParameter("username")
                 .and()
                 .rememberMe()
                     .rememberMeParameter("remember-me")
