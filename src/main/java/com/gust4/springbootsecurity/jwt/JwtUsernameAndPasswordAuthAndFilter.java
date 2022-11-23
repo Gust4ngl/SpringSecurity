@@ -15,6 +15,8 @@ import java.util.*;
 
 public class JwtUsernameAndPasswordAuthAndFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
+    String secret = "secretsecretsecretsecretsecretsecretsecretsecret";
+
 
     public JwtUsernameAndPasswordAuthAndFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -46,7 +48,7 @@ public class JwtUsernameAndPasswordAuthAndFilter extends UsernamePasswordAuthent
                 .claim("authorities", authResult.getAuthorities())
                 .setIssuedAt(new Date())
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(2)))
-                .signWith(Keys.secretKeyFor(SignatureAlgorithm.HS256))
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
         response.addHeader("Authorization", "Bearer " + token);
     }

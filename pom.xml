@@ -42,6 +42,13 @@
 			<artifactId>thymeleaf-extras-springsecurity5</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>28.1-jre</version>
+		</dependency>
+
+
 		<!-- Migrations -->
 		<dependency>
 			<groupId>org.flywaydb</groupId>
