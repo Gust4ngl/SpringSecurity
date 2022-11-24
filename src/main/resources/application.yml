@@ -1,3 +1,9 @@
+security:
+  jwt:
+    token:
+      secretKey: 53cr3753cr3753cr3753cr3753cr3753cr3753cr3753cr3753cr3753cr37
+      tokenPrefix: Bearer
+      tokenExpirationAfterDays: 14
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

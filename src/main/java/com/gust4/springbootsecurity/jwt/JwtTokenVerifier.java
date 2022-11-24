@@ -1,14 +1,15 @@
 package com.gust4.springbootsecurity.jwt;
 
 import com.google.common.base.*;
+import com.gust4.springbootsecurity.config.*;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.*;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.*;
 import org.springframework.security.core.authority.*;
 import org.springframework.security.core.context.*;
 import org.springframework.web.filter.*;
 
+import javax.crypto.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
@@ -16,26 +17,34 @@ import java.util.*;
 import java.util.stream.*;
 
 public class JwtTokenVerifier extends OncePerRequestFilter {
+    private final SecretKey secretKey;
+    private final JwtConfig jwtConfig;
+
+    public JwtTokenVerifier(SecretKey secretKey,
+                            JwtConfig jwtConfig) {
+        this.secretKey = secretKey;
+        this.jwtConfig = jwtConfig;
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String authorizationHeader = request.getHeader("Authorization");
+        String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
 
-        if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith("Bearer ")) {
+        if (Strings.isNullOrEmpty(authorizationHeader)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authorizationHeader.substring("Bearer ".length());
+        String token = authorizationHeader;
         Jws<Claims> jws;
 
         try {
-            String secret = "secretsecretsecretsecretsecretsecretsecretsecret";
-            jws = Jwts.parserBuilder()  // (1)
-                    .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))         // (2)
-                    .build()                    // (3)
+            jws = Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
                     .parseClaimsJws(token);
             Claims body =  jws.getBody();
 

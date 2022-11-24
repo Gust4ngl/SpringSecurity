@@ -10,7 +10,8 @@ import org.springframework.security.config.http.*;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.*;
 import org.springframework.security.crypto.password.*;
-import org.springframework.security.web.util.matcher.*;
+
+import javax.crypto.*;
 
 @Configuration
 @EnableWebSecurity
@@ -18,6 +19,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsService userDetailsService;
+    private final SecretKey secretKey;
+    private final JwtConfig jwtConfig;
+
+    @Autowired
+    public SecurityConfig(SecretKey secretKey, JwtConfig jwtConfig) {
+        this.secretKey = secretKey;
+        this.jwtConfig = jwtConfig;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -34,15 +43,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(new JwtUsernameAndPasswordAuthAndFilter(authenticationManager()))
-                .addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthAndFilter.class)
+                .addFilter(new JwtUsernameAndPasswordAuthAndFilter(authenticationManager(), jwtConfig, secretKey))
+                .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthAndFilter.class)
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers("/hello/adm").hasAuthority("ADMIN")
-                .antMatchers("/hello/trainee").hasAuthority("TRAINEE")
-                .antMatchers("/hello/user").hasAuthority("COMMON_USER")
+                .antMatchers("/hello/adm").hasRole("ADMIN")
+                .antMatchers("/hello/trainee").hasRole("TRAINEE")
+                .antMatchers("/hello/user").hasRole("COMMON_USER")
                 .anyRequest()
                 .authenticated();
 

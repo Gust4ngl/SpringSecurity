@@ -1,12 +1,13 @@
 package com.gust4.springbootsecurity.jwt;
 
 import com.fasterxml.jackson.databind.*;
+import com.gust4.springbootsecurity.config.*;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.*;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.*;
 import org.springframework.security.web.authentication.*;
 
+import javax.crypto.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.*;
@@ -14,12 +15,16 @@ import java.time.*;
 import java.util.*;
 
 public class JwtUsernameAndPasswordAuthAndFilter extends UsernamePasswordAuthenticationFilter {
+
     private final AuthenticationManager authenticationManager;
-    String secret = "secretsecretsecretsecretsecretsecretsecretsecret";
+    private final JwtConfig jwtConfig;
+    private final SecretKey secretKey;
 
 
-    public JwtUsernameAndPasswordAuthAndFilter(AuthenticationManager authenticationManager) {
+    public JwtUsernameAndPasswordAuthAndFilter(AuthenticationManager authenticationManager, JwtConfig jwtConfig, SecretKey secretKey) {
         this.authenticationManager = authenticationManager;
+        this.jwtConfig = jwtConfig;
+        this.secretKey = secretKey;
     }
 
     @Override
@@ -47,9 +52,9 @@ public class JwtUsernameAndPasswordAuthAndFilter extends UsernamePasswordAuthent
                 .setSubject(authResult.getName())
                 .claim("authorities", authResult.getAuthorities())
                 .setIssuedAt(new Date())
-                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(2)))
-                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(jwtConfig.getTokenExpirationAfterDays())))
+                .signWith(secretKey)
                 .compact();
-        response.addHeader("Authorization", "Bearer " + token);
+        response.addHeader(jwtConfig.getAuthorizationHeader(), token);
     }
 }
