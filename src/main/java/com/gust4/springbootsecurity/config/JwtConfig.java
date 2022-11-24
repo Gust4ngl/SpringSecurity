@@ -1,8 +1,8 @@
 package com.gust4.springbootsecurity.config;
 
-import com.google.common.net.*;
 import org.springframework.boot.context.properties.*;
 import org.springframework.context.annotation.*;
+import org.springframework.http.*;
 
 @ConfigurationProperties(prefix = "security.jwt.token")
 @Configuration

@@ -1,6 +1,5 @@
 package com.gust4.springbootsecurity.jwt;
 
-import com.google.common.base.*;
 import com.gust4.springbootsecurity.config.*;
 import io.jsonwebtoken.*;
 import org.springframework.security.authentication.*;
@@ -33,7 +32,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
         String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
 
-        if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
+        if (authorizationHeader.isBlank() || authorizationHeader == null || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
             filterChain.doFilter(request, response);
             return;
         }
