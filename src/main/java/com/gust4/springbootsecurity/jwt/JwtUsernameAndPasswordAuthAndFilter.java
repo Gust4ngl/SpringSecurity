@@ -20,7 +20,6 @@ public class JwtUsernameAndPasswordAuthAndFilter extends UsernamePasswordAuthent
     private final JwtConfig jwtConfig;
     private final SecretKey secretKey;
 
-
     public JwtUsernameAndPasswordAuthAndFilter(AuthenticationManager authenticationManager, JwtConfig jwtConfig, SecretKey secretKey) {
         this.authenticationManager = authenticationManager;
         this.jwtConfig = jwtConfig;
@@ -33,10 +32,12 @@ public class JwtUsernameAndPasswordAuthAndFilter extends UsernamePasswordAuthent
         try {
             UsernameAndPasswordAuthRequest authenticationRequest = new ObjectMapper().
                     readValue(request.getInputStream(), UsernameAndPasswordAuthRequest.class);
+
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getUsername(),
                     authenticationRequest.getPassword()
             );
+
             return authenticationManager.authenticate(authentication);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -55,6 +56,7 @@ public class JwtUsernameAndPasswordAuthAndFilter extends UsernamePasswordAuthent
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(jwtConfig.getTokenExpirationAfterDays())))
                 .signWith(secretKey)
                 .compact();
-        response.addHeader(jwtConfig.getAuthorizationHeader(), token);
+
+        response.addHeader(jwtConfig.getAuthorizationHeader(), jwtConfig.getTokenPrefix() + token);
     }
 }

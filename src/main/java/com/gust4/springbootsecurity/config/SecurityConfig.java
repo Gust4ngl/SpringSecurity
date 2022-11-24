@@ -4,6 +4,7 @@ import com.gust4.springbootsecurity.jwt.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.authentication.builders.*;
+import org.springframework.security.config.annotation.method.configuration.*;
 import org.springframework.security.config.annotation.web.builders.*;
 import org.springframework.security.config.annotation.web.configuration.*;
 import org.springframework.security.config.http.*;
@@ -15,15 +16,16 @@ import javax.crypto.*;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
     private UserDetailsService userDetailsService;
     private final SecretKey secretKey;
     private final JwtConfig jwtConfig;
 
     @Autowired
-    public SecurityConfig(SecretKey secretKey, JwtConfig jwtConfig) {
+    public SecurityConfig(UserDetailsService userDetailsService, SecretKey secretKey, JwtConfig jwtConfig) {
+        this.userDetailsService = userDetailsService;
         this.secretKey = secretKey;
         this.jwtConfig = jwtConfig;
     }
@@ -43,15 +45,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(new JwtUsernameAndPasswordAuthAndFilter(authenticationManager(), jwtConfig, secretKey))
                 .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthAndFilter.class)
                 .authorizeRequests()
+                .antMatchers("/hello/adm").hasAuthority("ADMIN")
+
+//                .antMatchers("/hello/trainee").hasRole("TRAINEE")
+//                .antMatchers("/hello/user").hasRole("COMMON_USER")
+
                 .antMatchers("/").permitAll()
-                .antMatchers("/hello/adm").hasRole("ADMIN")
-                .antMatchers("/hello/trainee").hasRole("TRAINEE")
-                .antMatchers("/hello/user").hasRole("COMMON_USER")
                 .anyRequest()
                 .authenticated();
 

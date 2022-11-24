@@ -8,12 +8,14 @@ import org.springframework.web.bind.annotation.*;
 public class HelloController {
 
     @GetMapping("/user")
+    @PreAuthorize("hasAuthority('COMMON_USER')")
     public String user() {return "hello user";}
 
     @GetMapping("/adm")
     public String adm() {return "hello adm";}
 
     @GetMapping("/trainee")
+    @PreAuthorize("hasAuthority('TRAINEE')")
     public String admTrainee() {return "hello trainee";}
 
 }
